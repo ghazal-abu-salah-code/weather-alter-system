@@ -1,3 +1,4 @@
+
 import { connectToMongoDB, saveAlert } from './mongo';
 import { loadWeatherData } from './loadWeatherData';
 import { getAlerts } from './alerts';
