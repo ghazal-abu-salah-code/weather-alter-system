@@ -1,49 +1,23 @@
+import mongoose from 'mongoose';
 
-import { error } from 'console';
-import mongoose from 'mongoose' ;
-
-const alertSchema = new mongoose.Schema({
-  location: String,
-  type: String,
-  value: Number,
-  timestamp: Date,
+const WeatherRecordSchema = new mongoose.Schema({
+  record_time: String,
+  air_pres: Number,
+  air_temp: Number,
+  water_temp: Number,
+  wind_dir: Number,
+  wind_speed: Number,
 });
 
-const Alert = mongoose.model('Alert', alertSchema);
+export const WeatherRecordModel = mongoose.model('WeatherRecord', WeatherRecordSchema);
 
 export async function connectToMongoDB() {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/weather-alerts', {
-      serverSelectionTimeoutMS: 5000,
-    });
+    await mongoose.connect('mongodb://localhost:27017/weatherdb');
     console.log('Connected to MongoDB');
-  } catch (err) {
-    console.error('MongoDB connection failed:', err);
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1);
   }
 }
 
-export async function saveAlert(record: any, alertType: string) {
-let parsedDate: Date;
-
-if (typeof record.record_time === 'string') {
-  const rawTime = record.record_time.replace(' ', 'T');
-  parsedDate = new Date(rawTime);
-} else if (record.record_time instanceof Date) {
-  parsedDate = record.record_time;
-} else {
-  console.error('Unrecognized date format:', record.record_time);
-  return;
-}
-
-if (isNaN(parsedDate.getTime())) {
-  console.error('Invalid Date:', record.record_time);
-  return;
-}
-  const alert = new Alert({
-    location: record.location || 'Unknown',
-    type: alertType,
-    value: record[alertType],
-    timestamp: parsedDate,
-  });
-  await alert.save();
-}

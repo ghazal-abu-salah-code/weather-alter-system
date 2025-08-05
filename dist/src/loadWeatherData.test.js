@@ -1,0 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const loadWeatherData_1 = require("./loadWeatherData");
+test('should parse CSV and return array of records', async () => {
+    const data = await (0, loadWeatherData_1.loadWeatherData)('src/data/sample.csv');
+    expect(data.length).toBeGreaterThan(0);
+    expect(data[0]).toHaveProperty('record_time');
+});
